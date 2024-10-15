@@ -15,9 +15,15 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "../ui/button";
 
+import { useAction } from "convex/react";
+import { api } from "../../../convex/_generated/api";
+// import { createChatAction } from "../../../convex/chat";
+
 interface StartChatProps {}
 
 const StartChat: React.FC<StartChatProps> = ({}) => {
+  const handlePlayerAction = useAction(api.chat.handlePlayerAction);
+  const [isPending, startTransition] = React.useTransition();
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -31,6 +37,11 @@ const StartChat: React.FC<StartChatProps> = ({}) => {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
+    startTransition(async () => {
+      await handlePlayerAction({ message: values.message });
+
+      form.reset();
+    });
   }
   return (
     <Form {...form}>
@@ -51,7 +62,7 @@ const StartChat: React.FC<StartChatProps> = ({}) => {
             </FormItem>
           )}
         />
-        <Button type="submit" variant="secondary">
+        <Button type="submit" variant="secondary" disabled={isPending}>
           Submit
         </Button>
       </form>

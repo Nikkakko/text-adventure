@@ -15,7 +15,7 @@ const EntriesList: React.FC<EntriesListProps> = ({}) => {
   });
 
   return (
-    <div className="bg-white rounded-xl h-[300px] w-[300px] overflow-y-auto p-2">
+    <div className="bg-white rounded-xl h-[450px]  overflow-y-auto p-2">
       {entries?.map(entry => (
         <div key={entry._id} className="flex flex-col gap-2  text-black mt-2">
           <div className="text-sm font-bold">{entry.input}</div>

@@ -43,23 +43,33 @@ export const setupAdventureEntries = internalAction({
     if (!adventure) {
       throw new Error("Adventure not found");
     }
-    const input = `You are a dungeon master who is going to run a text based adventure RPG for me.
-            You will need to setup an advanture for me wtich will involve having me fight random enemy encounters, reward me with loot after killing enemies, gimve me golas and quests, and finally let me know when i finish overall adventure.
+    const input = `
+    You are a dungeon master who is going to run a text based adventure RPG for me.
+    You will need to setup an adventure for me which will involve having
+    me fight random enemy encounters, reward me with loot after killing enemies,
+    give me goals and quests, and finally let me know when I finish the overall adventure.
 
-            During this entire time please track my health points which will start at 10, and my character class which is a ${adventure.characterClass}, and my inventory which will start with 
-            - a broad sword that deals a base damage of 1
-            - a bronze helmet 
-            - an a health potion that will restore 5 health points
+    When I am fighting enemies, please ask me to roll 6 sided dices, with a 1 being the worst outcome
+    of the scenario, and a 6 being the best outcome of the scenario.  Do not roll the dice for me,
+    I as the player should input this and you need to describe the outcome with my input.
 
-            the adventure should have some of the following:
-             - the hero must clear out a dungeon from undead enemies
-             - the dungeon has 3 levels
-            - each level has 1 set of enimies to fight
-              - the final level has a boss enemy to fight
-              - the final level has chest filled with one steel sword that deals 2 damage
+    During this entire time, please track my health points which will start at 10, 
+    my character class which is a ${adventure.characterClass}, and my inventory which will start with 
+    - a broad sword that deals a base damage of 1
+    - a bronze helmet
+    - an a health potion which heals for 3 hp
 
-              go ahead and describe the adventure for me, and then ask me for my next steps. 
-              When i am fighting enemies, please ask me to roll 6 sided dices, with a 1 being the worst outcome of scenario, and a 6 being the best outcome of scenario.`;
+    the adventure should have some of the following
+    - the hero must clear out a dungeon from undead enemies
+    - the dungeon has 3 levels
+    - each level has 1 set of enemies to fight
+    - the final level has a boss
+    - the final level has a chest filled with one steel sword which deals base damage of 2
+
+    Given this scenario, please ask the player for their initial actions.
+
+    PLEASE MAKE SURE TO NEVER ROLL FOR THE PLAYER.  YOU SHOULD ALWAYS ASK THE PLAYER FOR HIS NEXT STEPS.
+  `;
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [

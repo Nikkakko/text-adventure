@@ -1,9 +1,9 @@
-import { action, mutation, query } from "./_generated/server";
+import { action, internalQuery, mutation, query } from "./_generated/server";
 import { fetchMutation, fetchQuery, fetchAction } from "convex/nextjs";
 
 import { revalidatePath } from "next/cache";
 
-import { api } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 
 import { v } from "convex/values";
 import OpenAI from "openai";
@@ -11,16 +11,38 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+export const getEntriesForAdventure = internalQuery({
+  args: {
+    adventureId: v.id("adventures"),
+  },
+  handler: async (ctx, args) => {
+    return ctx.db
+      .query("entries")
+      .filter(q => q.eq(q.field("adventureId"), args.adventureId))
+      .collect();
+  },
+});
 export const handlePlayerAction = action({
   args: { message: v.string(), adventureId: v.id("adventures") },
   handler: async (ctx, args) => {
+    const entries = await ctx.runQuery(internal.chat.getEntriesForAdventure, {
+      adventureId: args.adventureId,
+    });
+
+    const prefix = entries
+      .map(entry => {
+        return `${entry.input}\n\n${entry.response}`;
+      })
+      .join("\n\n");
+
+    const userPrompt = args.message;
+
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
-        { role: "system", content: "You are a helpful assistant." },
         {
           role: "user",
-          content: "Write a haiku about recursion in programming.",
+          content: `${prefix}\n\n${userPrompt}`,
         },
       ],
     });
@@ -34,8 +56,6 @@ export const handlePlayerAction = action({
       response,
       adventureId,
     });
-
-    return completion;
   },
 });
 

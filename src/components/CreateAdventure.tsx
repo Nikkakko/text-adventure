@@ -10,7 +10,7 @@ interface CreateAdventureProps {}
 
 const CreateAdventure: React.FC<CreateAdventureProps> = ({}) => {
   const [isPending, startTransition] = React.useTransition();
-  const createAdventure = useMutation(api.adventure.createAdventure);
+  const createAdventure = useMutation(api.adventures.createAdventure);
   const router = useRouter();
   return (
     <Button
@@ -18,10 +18,10 @@ const CreateAdventure: React.FC<CreateAdventureProps> = ({}) => {
       type="button"
       onClick={() => {
         startTransition(async () => {
-          await createAdventure({
-            characterClass: "warrior",
+          const adventureId = await createAdventure({
+            character: "warrior",
           });
-          router.push("/adventure");
+          router.push(`/adventures/${adventureId}`);
         });
       }}
       disabled={isPending}

@@ -1,6 +1,7 @@
 import StartChat from "@/components/forms/start-chat";
-
 import EntriesList from "@/components/EntriesList";
+
+interface AdventurePageProps {}
 
 export default function AdventurePage() {
   return (

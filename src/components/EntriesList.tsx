@@ -1,12 +1,19 @@
-"use cliient";
+"use client";
 import { useQuery } from "convex/react";
 import * as React from "react";
 import { api } from "../../convex/_generated/api";
+import { useParams } from "next/navigation";
+import { Id } from "../../convex/_generated/dataModel";
 
 interface EntriesListProps {}
 
 const EntriesList: React.FC<EntriesListProps> = ({}) => {
-  const entries = useQuery(api.chat.getAllEntries);
+  const params = useParams();
+
+  const entries = useQuery(api.chat.getAllEntries, {
+    adventureId: params.adventureId as Id<"adventures">,
+  });
+
   return (
     <div className="bg-white rounded-xl h-[300px] w-[300px] overflow-y-auto p-2">
       {entries?.map(entry => (

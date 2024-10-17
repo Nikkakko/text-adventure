@@ -4,6 +4,7 @@ import * as React from "react";
 import { api } from "../../convex/_generated/api";
 import { useParams } from "next/navigation";
 import { Id } from "../../convex/_generated/dataModel";
+import { Skeleton } from "./ui/skeleton";
 
 interface EntriesListProps {}
 
@@ -13,6 +14,8 @@ const EntriesList: React.FC<EntriesListProps> = ({}) => {
   const entries = useQuery(api.chat.getAllEntries, {
     adventureId: params.adventureId as Id<"adventures">,
   });
+
+  if (!entries) return <Skeleton className="h-[450px] z-20" />;
 
   return (
     <div className="bg-white rounded-xl h-[450px]  overflow-y-auto p-2">
